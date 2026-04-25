@@ -102,6 +102,28 @@ def format_title_for_platform(
 
         return result
 
+    elif platform == "discord":
+        # Discord: wrap URLs in <> to suppress embeds
+        title_prefix = "🆕 " if title_data.get("is_new") else ""
+
+        if show_source:
+            result = f"[{title_data['source_name']}] {title_prefix}{cleaned_title}"
+        elif show_keyword and keyword:
+            result = f"[{keyword}] {title_prefix}{cleaned_title}"
+        else:
+            result = f"{title_prefix}{cleaned_title}"
+
+        if rank_display:
+            result += f" {rank_display}"
+        if title_data["time_display"]:
+            result += f" - {title_data['time_display']}"
+        if title_data["count"] > 1:
+            result += f" ({title_data['count']}次)"
+        if link_url:
+            result += f" <{link_url}>"
+
+        return result
+
     elif platform in ("wework", "bark"):
         # WeWork 和 Bark 使用 markdown 格式
         if link_url:

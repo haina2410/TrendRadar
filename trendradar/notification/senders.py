@@ -1268,6 +1268,164 @@ def send_to_slack(
     return True
 
 
+def send_to_discord(
+    webhook_url: str,
+    report_data: Dict,
+    report_type: str,
+    update_info: Optional[Dict] = None,
+    proxy_url: Optional[str] = None,
+    mode: str = "daily",
+    account_label: str = "",
+    *,
+    batch_size: int = 1900,
+    batch_interval: float = 1.0,
+    split_content_func: Callable = None,
+    rss_items: Optional[list] = None,
+    rss_new_items: Optional[list] = None,
+    ai_analysis: Any = None,
+    display_regions: Optional[Dict] = None,
+    standalone_data: Optional[Dict] = None,
+    username: Optional[str] = None,
+    avatar_url: Optional[str] = None,
+) -> bool:
+    """
+    Send to Discord webhook (supports batch sending, markdown format)
+
+    Args:
+        webhook_url: Discord Webhook URL
+        report_data: Report data
+        report_type: Report type
+        update_info: Update info (optional)
+        proxy_url: Proxy URL (optional)
+        mode: Report mode (daily/current)
+        account_label: Account label (for multi-account display)
+        batch_size: Batch size in bytes (Discord has 2000 char limit)
+        batch_interval: Interval between batches in seconds
+        split_content_func: Content splitting function
+        rss_items: RSS stats items list (optional)
+        rss_new_items: RSS new items list (optional)
+        ai_analysis: AI analysis result (optional)
+        display_regions: Display regions config (optional)
+        standalone_data: Standalone section data (optional)
+        username: Custom bot username (optional)
+        avatar_url: Custom bot avatar URL (optional)
+
+    Returns:
+        bool: Whether sending was successful
+    """
+    headers = {"Content-Type": "application/json"}
+    proxies = None
+    if proxy_url:
+        proxies = {"http": proxy_url, "https": proxy_url}
+
+    log_prefix = f"Discord{account_label}" if account_label else "Discord"
+
+    ai_content = None
+    ai_stats = None
+    if ai_analysis:
+        ai_content = _render_ai_analysis(ai_analysis, "discord")
+        if getattr(ai_analysis, "success", False):
+            ai_stats = {
+                "total_news": getattr(ai_analysis, "total_news", 0),
+                "analyzed_news": getattr(ai_analysis, "analyzed_news", 0),
+                "max_news_limit": getattr(ai_analysis, "max_news_limit", 0),
+                "hotlist_count": getattr(ai_analysis, "hotlist_count", 0),
+                "rss_count": getattr(ai_analysis, "rss_count", 0),
+                "ai_mode": getattr(ai_analysis, "ai_mode", ""),
+            }
+
+    import re
+    def _compact_discord_content(content: str) -> str:
+        """Reduce multiple newlines to single newline for compact Discord display"""
+        content = re.sub(r'\n{3,}', '\n\n', content)
+        content = re.sub(r'\n\n(\s*\d+\.)', r'\n\1', content)
+        return content.strip()
+
+    header_reserve = get_max_batch_header_size("discord")
+    batches = split_content_func(
+        report_data,
+        "discord",
+        update_info,
+        max_bytes=batch_size - header_reserve,
+        mode=mode,
+        rss_items=rss_items,
+        rss_new_items=rss_new_items,
+        ai_content=ai_content,
+        standalone_data=standalone_data,
+        ai_stats=ai_stats,
+        report_type=report_type,
+    )
+
+    batches = add_batch_headers(batches, "discord", batch_size)
+
+    # Compact content by reducing multiple newlines
+    batches = [_compact_discord_content(b) for b in batches]
+
+    print(f"{log_prefix}消息分为 {len(batches)} 批次发送 [{report_type}]")
+
+    for i, batch_content in enumerate(batches, 1):
+        content_size = len(batch_content.encode("utf-8"))
+        print(
+            f"发送{log_prefix}第 {i}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"
+        )
+
+        if content_size > 2000:
+            print(
+                f"警告：{log_prefix}第 {i}/{len(batches)} 批次消息过大（{content_size} 字节），Discord 限制 2000 字符"
+            )
+
+        payload = {"content": batch_content}
+
+        if username:
+            payload["username"] = username
+        if avatar_url:
+            payload["avatar_url"] = avatar_url
+
+        try:
+            response = requests.post(
+                webhook_url, headers=headers, json=payload, proxies=proxies, timeout=30
+            )
+
+            if response.status_code == 204:
+                print(f"{log_prefix}第 {i}/{len(batches)} 批次发送成功 [{report_type}]")
+                if i < len(batches):
+                    time.sleep(batch_interval)
+            elif response.status_code == 429:
+                retry_after = response.json().get("retry_after", 5)
+                print(
+                    f"{log_prefix}第 {i}/{len(batches)} 批次速率限制 [{report_type}]，等待 {retry_after} 秒后重试"
+                )
+                time.sleep(retry_after)
+                retry_response = requests.post(
+                    webhook_url, headers=headers, json=payload, proxies=proxies, timeout=30
+                )
+                if retry_response.status_code == 204:
+                    print(f"{log_prefix}第 {i}/{len(batches)} 批次重试成功 [{report_type}]")
+                else:
+                    print(
+                        f"{log_prefix}第 {i}/{len(batches)} 批次重试失败，状态码：{retry_response.status_code}"
+                    )
+                    return False
+            else:
+                error_msg = ""
+                try:
+                    error_data = response.json()
+                    error_msg = error_data.get("message", str(error_data))
+                except:
+                    error_msg = response.text or f"状态码：{response.status_code}"
+                print(
+                    f"{log_prefix}第 {i}/{len(batches)} 批次发送失败 [{report_type}]，错误：{error_msg}"
+                )
+                return False
+        except Exception as e:
+            print(f"{log_prefix}第 {i}/{len(batches)} 批次发送出错 [{report_type}]：{e}")
+            return False
+
+    print(f"{log_prefix}所有 {len(batches)} 批次发送完成 [{report_type}]")
+
+    return True
+
+
 def send_to_generic_webhook(
     webhook_url: str,
     payload_template: Optional[str],

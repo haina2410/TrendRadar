@@ -125,6 +125,7 @@ DEFAULT_BATCH_SIZES = {
     "dingtalk": 20000,
     "feishu": 29000,
     "ntfy": 3800,
+    "discord": 1900,
     "default": 4000,
 }
 
@@ -193,6 +194,8 @@ def split_content_into_batches(
             max_bytes = sizes.get("feishu", 29000)
         elif format_type == "ntfy":
             max_bytes = sizes.get("ntfy", 3800)
+        elif format_type == "discord":
+            max_bytes = sizes.get("discord", 1900)
         else:
             max_bytes = sizes.get("default", 4000)
 
@@ -236,7 +239,7 @@ def split_content_into_batches(
             mode_label = mode_map.get(ai_mode, ai_mode)
             mode_suffix = f" ({mode_label})"
 
-        if format_type in ("wework", "bark", "ntfy", "feishu", "dingtalk"):
+        if format_type in ("wework", "bark", "ntfy", "feishu", "dingtalk", "discord"):
             ai_stats_line = f"**AI Analysis:** {news_display}{mode_suffix}\n"
         elif format_type == "slack":
             ai_stats_line = f"*AI Analysis:* {news_display}{mode_suffix}\n"
@@ -244,7 +247,12 @@ def split_content_into_batches(
             ai_stats_line = f"AI Analysis: {news_display}{mode_suffix}\n"
 
     # Build unified header (always show total news, time, and type)
-    if format_type in ("wework", "bark"):
+    if format_type == "discord":
+        # Discord: compact single-line header
+        base_header = f"**{report_type}** | {total_titles} items | {now.strftime('%H:%M')}\n"
+        if ai_stats_line:
+            base_header += ai_stats_line
+    elif format_type in ("wework", "bark"):
         base_header = f"**Total News:** {total_titles}\n"
         base_header += ai_stats_line
         base_header += f"**Time:** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
@@ -278,7 +286,10 @@ def split_content_into_batches(
         base_header += f"*Type:* {report_type}\n\n"
 
     base_footer = ""
-    if format_type in ("wework", "bark"):
+    if format_type == "discord":
+        # Discord: minimal footer
+        base_footer = f"\n-# Updated: {now.strftime('%H:%M')}"
+    elif format_type in ("wework", "bark"):
         base_footer = f"\n\n\n> Updated: {now.strftime('%Y-%m-%d %H:%M:%S')}"
         if update_info:
             base_footer += f"\n> TrendRadar new version **{update_info['remote_version']}** available, current **{update_info['current_version']}**"
@@ -307,7 +318,9 @@ def split_content_into_batches(
     stats_title = "Keyword Statistics" if display_mode == "keyword" else "News Statistics"
     stats_header = ""
     if report_data["stats"]:
-        if format_type in ("wework", "bark"):
+        if format_type == "discord":
+            stats_header = f"📊 **{stats_title}** ({total_hotlist_count})\n"
+        elif format_type in ("wework", "bark"):
             stats_header = f"📊 **{stats_title}** ({total_hotlist_count} items)\n\n"
         elif format_type == "telegram":
             stats_header = f"📊 {stats_title} ({total_hotlist_count} items)\n\n"
@@ -360,7 +373,7 @@ def split_content_into_batches(
                 actual_stats_header = f"\n{feishu_separator}\n\n{stats_header}"
             elif format_type == "dingtalk":
                 actual_stats_header = f"\n---\n\n{stats_header}"
-            elif format_type in ("wework", "bark"):
+            elif format_type in ("wework", "bark", "discord"):
                 actual_stats_header = f"\n\n\n\n{stats_header}"
             else:
                 actual_stats_header = f"\n\n{stats_header}"
@@ -392,7 +405,7 @@ def split_content_into_batches(
 
             # 构建词组标题
             word_header = ""
-            if format_type in ("wework", "bark"):
+            if format_type in ("wework", "bark", "discord"):
                 if count >= 10:
                     word_header = (
                         f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"
@@ -458,7 +471,11 @@ def split_content_into_batches(
             first_news_line = ""
             if stat["titles"]:
                 first_title_data = stat["titles"][0]
-                if format_type in ("wework", "bark"):
+                if format_type == "discord":
+                    formatted_title = format_title_for_platform(
+                        "discord", first_title_data, show_source=show_source, show_keyword=show_keyword
+                    )
+                elif format_type in ("wework", "bark"):
                     formatted_title = format_title_for_platform(
                         "wework", first_title_data, show_source=show_source, show_keyword=show_keyword
                     )
@@ -513,7 +530,11 @@ def split_content_into_batches(
             # 处理剩余新闻条目
             for j in range(start_index, len(stat["titles"])):
                 title_data = stat["titles"][j]
-                if format_type in ("wework", "bark"):
+                if format_type == "discord":
+                    formatted_title = format_title_for_platform(
+                        "discord", title_data, show_source=show_source, show_keyword=show_keyword
+                    )
+                elif format_type in ("wework", "bark"):
                     formatted_title = format_title_for_platform(
                         "wework", title_data, show_source=show_source, show_keyword=show_keyword
                     )
@@ -563,7 +584,7 @@ def split_content_into_batches(
             # 词组间分隔符
             if i < len(report_data["stats"]) - 1:
                 separator = ""
-                if format_type in ("wework", "bark"):
+                if format_type in ("wework", "bark", "discord"):
                     separator = f"\n\n\n\n"
                 elif format_type == "telegram":
                     separator = f"\n\n"
@@ -595,7 +616,7 @@ def split_content_into_batches(
         new_header = ""
         if add_separator and current_batch_has_content:
             # 需要添加分割线
-            if format_type in ("wework", "bark"):
+            if format_type in ("wework", "bark", "discord"):
                 new_header = f"\n\n\n\n🆕 **New Hot News** ({report_data['total_new_count']} items)\n\n"
             elif format_type == "telegram":
                 new_header = (
@@ -611,7 +632,7 @@ def split_content_into_batches(
                 new_header = f"\n\n🆕 *New Hot News* ({report_data['total_new_count']} items)\n\n"
         else:
             # 不需要分割线（第一个区域）
-            if format_type in ("wework", "bark"):
+            if format_type in ("wework", "bark", "discord"):
                 new_header = f"🆕 **New Hot News** ({report_data['total_new_count']} items)\n\n"
             elif format_type == "telegram":
                 new_header = f"🆕 New Hot News ({report_data['total_new_count']} items)\n\n"
@@ -642,7 +663,7 @@ def split_content_into_batches(
         # 逐个处理新增新闻来源
         for source_data in report_data["new_titles"]:
             source_header = ""
-            if format_type in ("wework", "bark"):
+            if format_type in ("wework", "bark", "discord"):
                 source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
             elif format_type == "telegram":
                 source_header = f"{source_data['source_name']} ({len(source_data['titles'])} items):\n\n"
@@ -662,7 +683,11 @@ def split_content_into_batches(
                 title_data_copy = first_title_data.copy()
                 title_data_copy["is_new"] = False
 
-                if format_type in ("wework", "bark"):
+                if format_type == "discord":
+                    formatted_title = format_title_for_platform(
+                        "discord", title_data_copy, show_source=False
+                    )
+                elif format_type in ("wework", "bark"):
                     formatted_title = format_title_for_platform(
                         "wework", title_data_copy, show_source=False
                     )
@@ -774,7 +799,7 @@ def split_content_into_batches(
                 ai_separator = f"\n{feishu_separator}\n\n"
             elif format_type == "dingtalk":
                 ai_separator = "\n---\n\n"
-            elif format_type in ("wework", "bark"):
+            elif format_type in ("wework", "bark", "discord"):
                 ai_separator = "\n\n\n\n"
             elif format_type in ("telegram", "ntfy", "slack"):
                 ai_separator = "\n\n"
@@ -1011,7 +1036,7 @@ def _process_rss_stats_section(
             rss_header = f"\n{feishu_separator}\n\n📰 **RSS Feed Statistics** ({total_items} items)\n\n"
         elif format_type == "dingtalk":
             rss_header = f"\n---\n\n📰 **RSS Feed Statistics** ({total_items} items)\n\n"
-        elif format_type in ("wework", "bark"):
+        elif format_type in ("wework", "bark", "discord"):
             rss_header = f"\n\n\n\n📰 **RSS Feed Statistics** ({total_items} items)\n\n"
         elif format_type == "telegram":
             rss_header = f"\n\n📰 RSS Feed Statistics ({total_items} items)\n\n"
@@ -1053,7 +1078,7 @@ def _process_rss_stats_section(
 
         # 构建关键词标题（与热榜格式一致）
         word_header = ""
-        if format_type in ("wework", "bark"):
+        if format_type in ("wework", "bark", "discord"):
             if count >= 10:
                 word_header = f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"
             elif count >= 5:
@@ -1100,7 +1125,9 @@ def _process_rss_stats_section(
         first_news_line = ""
         if stat["titles"]:
             first_title_data = stat["titles"][0]
-            if format_type in ("wework", "bark"):
+            if format_type == "discord":
+                formatted_title = format_title_for_platform("discord", first_title_data, show_source=True)
+            elif format_type in ("wework", "bark"):
                 formatted_title = format_title_for_platform("wework", first_title_data, show_source=True)
             elif format_type == "telegram":
                 formatted_title = format_title_for_platform("telegram", first_title_data, show_source=True)
@@ -1140,7 +1167,9 @@ def _process_rss_stats_section(
         # 处理剩余新闻条目
         for j in range(start_index, len(stat["titles"])):
             title_data = stat["titles"][j]
-            if format_type in ("wework", "bark"):
+            if format_type == "discord":
+                formatted_title = format_title_for_platform("discord", title_data, show_source=True)
+            elif format_type in ("wework", "bark"):
                 formatted_title = format_title_for_platform("wework", title_data, show_source=True)
             elif format_type == "telegram":
                 formatted_title = format_title_for_platform("telegram", title_data, show_source=True)
@@ -1175,7 +1204,7 @@ def _process_rss_stats_section(
         # 关键词间分隔符
         if i < len(rss_stats) - 1:
             separator = ""
-            if format_type in ("wework", "bark"):
+            if format_type in ("wework", "bark", "discord"):
                 separator = "\n\n\n\n"
             elif format_type == "telegram":
                 separator = "\n\n"
@@ -1249,7 +1278,7 @@ def _process_rss_new_titles_section(
     new_header = ""
     if add_separator and current_batch_has_content:
         # 需要添加分割线
-        if format_type in ("wework", "bark"):
+        if format_type in ("wework", "bark", "discord"):
             new_header = f"\n\n\n\n🆕 **New RSS Items** ({total_items} items)\n\n"
         elif format_type == "telegram":
             new_header = f"\n\n🆕 New RSS Items ({total_items} items)\n\n"
@@ -1263,7 +1292,7 @@ def _process_rss_new_titles_section(
             new_header = f"\n\n🆕 *New RSS Items* ({total_items} items)\n\n"
     else:
         # 不需要分割线（第一个区域）
-        if format_type in ("wework", "bark"):
+        if format_type in ("wework", "bark", "discord"):
             new_header = f"🆕 **New RSS Items** ({total_items} items)\n\n"
         elif format_type == "telegram":
             new_header = f"🆕 New RSS Items ({total_items} items)\n\n"
@@ -1296,7 +1325,7 @@ def _process_rss_new_titles_section(
 
         # 构建来源标题（与热榜新增格式一致）
         source_header = ""
-        if format_type in ("wework", "bark"):
+        if format_type in ("wework", "bark", "discord"):
             source_header = f"**{source_name}** ({count} items):\n\n"
         elif format_type == "telegram":
             source_header = f"{source_name} ({count} items):\n\n"
@@ -1314,7 +1343,9 @@ def _process_rss_new_titles_section(
         if titles:
             first_title_data = titles[0].copy()
             first_title_data["is_new"] = False
-            if format_type in ("wework", "bark"):
+            if format_type == "discord":
+                formatted_title = format_title_for_platform("discord", first_title_data, show_source=False)
+            elif format_type in ("wework", "bark"):
                 formatted_title = format_title_for_platform("wework", first_title_data, show_source=False)
             elif format_type == "telegram":
                 formatted_title = format_title_for_platform("telegram", first_title_data, show_source=False)
@@ -1353,7 +1384,9 @@ def _process_rss_new_titles_section(
         for j in range(start_index, len(titles)):
             title_data = titles[j].copy()
             title_data["is_new"] = False
-            if format_type in ("wework", "bark"):
+            if format_type == "discord":
+                formatted_title = format_title_for_platform("discord", title_data, show_source=False)
+            elif format_type in ("wework", "bark"):
                 formatted_title = format_title_for_platform("wework", title_data, show_source=False)
             elif format_type == "telegram":
                 formatted_title = format_title_for_platform("telegram", title_data, show_source=False)
@@ -1505,7 +1538,7 @@ def _process_standalone_section(
             section_header = f"\n{feishu_separator}\n\n📋 **Standalone Section** ({total_items} items)\n\n"
         elif format_type == "dingtalk":
             section_header = f"\n---\n\n📋 **Standalone Section** ({total_items} items)\n\n"
-        elif format_type in ("wework", "bark"):
+        elif format_type in ("wework", "bark", "discord"):
             section_header = f"\n\n\n\n📋 **Standalone Section** ({total_items} items)\n\n"
         elif format_type == "telegram":
             section_header = f"\n\n📋 Standalone Section ({total_items} items)\n\n"
@@ -1548,7 +1581,7 @@ def _process_standalone_section(
 
         # 平台标题
         platform_header = ""
-        if format_type in ("wework", "bark"):
+        if format_type in ("wework", "bark", "discord"):
             platform_header = f"**{platform_name}** ({len(items)} items):\n\n"
         elif format_type == "telegram":
             platform_header = f"{platform_name} ({len(items)} items):\n\n"
@@ -1612,7 +1645,7 @@ def _process_standalone_section(
 
         # RSS 源标题
         feed_header = ""
-        if format_type in ("wework", "bark"):
+        if format_type in ("wework", "bark", "discord"):
             feed_header = f"**{feed_name}** ({len(items)} items):\n\n"
         elif format_type == "telegram":
             feed_header = f"{feed_name} ({len(items)} items):\n\n"

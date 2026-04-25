@@ -53,30 +53,14 @@ schedule:
 #   - name: 显示名称（可自定义，修改后不影响运行）
 # ===============================================================
 platforms:
-  enabled: false                        # Disabled - using English RSS feeds instead
+  enabled: true
   sources:
-    - id: "toutiao"
-      name: "今日头条"
-    - id: "baidu"
-      name: "百度热搜"
-    - id: "wallstreetcn-hot"
-      name: "华尔街见闻"
-    - id: "thepaper"
-      name: "澎湃新闻"
     - id: "bilibili-hot-search"
       name: "bilibili 热搜"
-    - id: "cls-hot"
-      name: "财联社热门"
-    - id: "ifeng"
-      name: "凤凰网"
-    - id: "tieba"
-      name: "贴吧"
     - id: "weibo"
       name: "微博"
     - id: "douyin"
       name: "抖音"
-    - id: "zhihu"
-      name: "知乎"
 
 
 
@@ -139,7 +123,7 @@ rss:
     - id: "reuters-world"
       name: "Reuters World"
       url: "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best"
-      enabled: false                  # Enable if needed
+      enabled: true                  # Enable if needed
 
     # Add your custom feeds below
     # - id: "custom-feed"
@@ -359,6 +343,12 @@ notification:
     slack:
       webhook_url: ""                 # Slack Incoming Webhook URL
 
+    discord:
+      webhook_url: ""                 # Discord Webhook URL
+                                      # Get from: Server Settings → Integrations → Webhooks → New Webhook
+      username: "TrendRadar"          # Bot display name (optional)
+      avatar_url: ""                  # Bot avatar URL (optional)
+
     generic_webhook:
       webhook_url: ""                 # 通用 Webhook URL（支持 Discord、Matrix、IFTTT 等）
       payload_template: ""            # JSON 模板，支持 {title} 和 {content} 占位符
@@ -480,7 +470,7 @@ ai:
 # 模型配置见上方 ai 配置段
 # ===============================================================
 ai_analysis:
-  enabled: true                     # 是否启用 AI 分析（总开关）
+  enabled: false                     # 是否启用 AI 分析（总开关）
                                     # ⚠️ 开启调度系统后，此项仍为总开关：
                                     #   false → 永远不分析（无论调度怎么设置）
                                     #   true  → 由调度的 analyze 字段控制何时分析
@@ -539,7 +529,7 @@ ai_analysis:
 # 模型配置见上方 ai 配置段
 # ===============================================================
 ai_translation:
-  enabled: false                   # Disabled - using English sources directly
+  enabled: true                   # Disabled - using English sources directly
 
   # Target translation language
   # Format: natural language description
@@ -604,5 +594,6 @@ advanced:
     feishu: 30000
     bark: 4000
     slack: 4000
+    discord: 1950                     # Discord has 2000 char limit per message
   batch_send_interval: 3              # 批次发送间隔（秒）
   feishu_message_separator: "━━━━━━━━━━━━━━━━"

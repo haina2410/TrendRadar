@@ -1,0 +1,6 @@
+output/
+__pycache__/
+
+# Environment files with credentials
+.env
+docker/.env

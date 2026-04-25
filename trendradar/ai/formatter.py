@@ -366,6 +366,7 @@ def get_ai_analysis_renderer(channel: str):
         "ntfy": render_ai_analysis_markdown,
         "bark": render_ai_analysis_plain,
         "slack": render_ai_analysis_markdown,
+        "discord": render_ai_analysis_markdown,  # Discord supports markdown
     }
     return renderers.get(channel, render_ai_analysis_markdown)
 

@@ -12,7 +12,7 @@ def get_batch_header(format_type: str, batch_num: int, total_batches: int) -> st
     """根据 format_type 生成对应格式的批次头部
 
     Args:
-        format_type: 推送类型（telegram, slack, wework_text, bark, feishu, dingtalk, ntfy, wework）
+        format_type: 推送类型（telegram, slack, wework_text, bark, feishu, dingtalk, ntfy, wework, discord）
         batch_num: 当前批次编号
         total_batches: 总批次数
 
@@ -26,6 +26,9 @@ def get_batch_header(format_type: str, batch_num: int, total_batches: int) -> st
     elif format_type in ("wework_text", "bark"):
         # WeWork text mode and Bark use plain text format
         return f"[Batch {batch_num}/{total_batches}]\n\n"
+    elif format_type == "discord":
+        # Discord supports markdown with **bold**
+        return f"**[Batch {batch_num}/{total_batches}]**\n\n"
     else:
         # Feishu, DingTalk, ntfy, WeWork markdown mode
         return f"**[Batch {batch_num}/{total_batches}]**\n\n"
