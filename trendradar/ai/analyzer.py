@@ -90,7 +90,7 @@ class AIAnalyzer:
         stats: List[Dict],
         rss_stats: Optional[List[Dict]] = None,
         report_mode: str = "daily",
-        report_type: str = "当日汇总",
+        report_type: str = "Daily Summary",
         platforms: Optional[List[str]] = None,
         keywords: Optional[List[str]] = None,
         standalone_data: Optional[Dict] = None,

@@ -1265,11 +1265,11 @@ def render_html_content(
 
     # 处理报告类型显示（根据 mode 直接显示）
     if mode == "current":
-        html += "当前榜单"
+        html += "Current Ranking"
     elif mode == "incremental":
-        html += "增量分析"
+        html += "Incremental Update"
     else:
-        html += "全天汇总"
+        html += "Daily Summary"
 
     html += """</span>
                     </div>

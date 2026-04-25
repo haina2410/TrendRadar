@@ -43,10 +43,10 @@ def render_feishu_content(
     if region_order is None:
         region_order = DEFAULT_REGION_ORDER
 
-    # 生成热点词汇统计部分
+    # 生成Keyword Statistics部分
     stats_content = ""
     if report_data["stats"]:
-        stats_content += "📊 **热点词汇统计**\n\n"
+        stats_content += "📊 **Keyword Statistics**\n\n"
 
         total_count = len(report_data["stats"])
 
@@ -79,12 +79,12 @@ def render_feishu_content(
     new_titles_content = ""
     if show_new_section and report_data["new_titles"]:
         new_titles_content += (
-            f"🆕 **本次新增热点新闻** (共 {report_data['total_new_count']} 条)\n\n"
+            f"🆕 **New Hot News** ({report_data['total_new_count']} items)\n\n"
         )
 
         for source_data in report_data["new_titles"]:
             new_titles_content += (
-                f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n"
+                f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n"
             )
 
             for j, title_data in enumerate(source_data["titles"], 1):
@@ -120,29 +120,29 @@ def render_feishu_content(
 
     if not text_content:
         if mode == "incremental":
-            mode_text = "增量模式下暂无新增匹配的热点词汇"
+            mode_text = "No new matching keywords in incremental mode"
         elif mode == "current":
-            mode_text = "当前榜单模式下暂无匹配的热点词汇"
+            mode_text = "No matching keywords in current mode"
         else:
-            mode_text = "暂无匹配的热点词汇"
+            mode_text = "No matching keywords"
         text_content = f"📭 {mode_text}\n\n"
 
     if report_data["failed_ids"]:
-        if text_content and "暂无匹配" not in text_content:
+        if text_content and "No matching" not in text_content:
             text_content += f"\n{separator}\n\n"
 
-        text_content += "⚠️ **数据获取失败的平台：**\n\n"
+        text_content += "⚠️ **Failed to fetch data from:**\n\n"
         for i, id_value in enumerate(report_data["failed_ids"], 1):
             text_content += f"  • <font color='red'>{id_value}</font>\n"
 
-    # 获取当前时间
+    # Get current time
     now = get_time_func() if get_time_func else datetime.now()
     text_content += (
-        f"\n\n<font color='grey'>更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
+        f"\n\n<font color='grey'>Updated: {now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
     )
 
     if update_info:
-        text_content += f"\n<font color='grey'>TrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}</font>"
+        text_content += f"\n<font color='grey'>TrendRadar new version {update_info['remote_version']} available, current {update_info['current_version']}</font>"
 
     return text_content
 
@@ -184,10 +184,10 @@ def render_dingtalk_content(
     header_content += "**类型：** 热点分析报告\n\n"
     header_content += "---\n\n"
 
-    # 生成热点词汇统计部分
+    # 生成Keyword Statistics部分
     stats_content = ""
     if report_data["stats"]:
-        stats_content += "📊 **热点词汇统计**\n\n"
+        stats_content += "📊 **Keyword Statistics**\n\n"
 
         total_count = len(report_data["stats"])
 
@@ -220,11 +220,11 @@ def render_dingtalk_content(
     new_titles_content = ""
     if show_new_section and report_data["new_titles"]:
         new_titles_content += (
-            f"🆕 **本次新增热点新闻** (共 {report_data['total_new_count']} 条)\n\n"
+            f"🆕 **New Hot News** ({report_data['total_new_count']} items)\n\n"
         )
 
         for source_data in report_data["new_titles"]:
-            new_titles_content += f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n\n"
+            new_titles_content += f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
 
             for j, title_data in enumerate(source_data["titles"], 1):
                 title_data_copy = title_data.copy()
@@ -261,25 +261,25 @@ def render_dingtalk_content(
 
     if not has_content:
         if mode == "incremental":
-            mode_text = "增量模式下暂无新增匹配的热点词汇"
+            mode_text = "No new matching keywords in incremental mode"
         elif mode == "current":
-            mode_text = "当前榜单模式下暂无匹配的热点词汇"
+            mode_text = "No matching keywords in current mode"
         else:
-            mode_text = "暂无匹配的热点词汇"
+            mode_text = "No matching keywords"
         text_content += f"📭 {mode_text}\n\n"
 
     if report_data["failed_ids"]:
-        if "暂无匹配" not in text_content:
+        if "No matching" not in text_content:
             text_content += "\n---\n\n"
 
-        text_content += "⚠️ **数据获取失败的平台：**\n\n"
+        text_content += "⚠️ **Failed to fetch data from:**\n\n"
         for i, id_value in enumerate(report_data["failed_ids"], 1):
             text_content += f"  • **{id_value}**\n"
 
-    text_content += f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
+    text_content += f"\n\n> Updated: {now.strftime('%Y-%m-%d %H:%M:%S')}"
 
     if update_info:
-        text_content += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+        text_content += f"\n> TrendRadar new version **{update_info['remote_version']}** available, current **{update_info['current_version']}**"
 
     return text_content
 
@@ -300,12 +300,12 @@ def _render_rss_section_feishu(rss_items: list, separator: str = "---") -> str:
             feeds_map[feed_id] = []
         feeds_map[feed_id].append(item)
 
-    text_content = f"📰 **RSS 订阅更新** (共 {len(rss_items)} 条)\n\n"
+    text_content = f"📰 **RSS Feed Updates** ({len(rss_items)} items)\n\n"
 
     for feed_id, items in feeds_map.items():
         feed_name = items[0].get("feed_name", feed_id) if items else feed_id
 
-        text_content += f"**{feed_name}** ({len(items)} 条)\n\n"
+        text_content += f"**{feed_name}** ({len(items)} items)\n\n"
 
         for i, item in enumerate(items, 1):
             title = item.get("title", "")
@@ -343,12 +343,12 @@ def _render_rss_section_markdown(rss_items: list) -> str:
             feeds_map[feed_id] = []
         feeds_map[feed_id].append(item)
 
-    text_content = f"📰 **RSS 订阅更新** (共 {len(rss_items)} 条)\n\n"
+    text_content = f"📰 **RSS Feed Updates** ({len(rss_items)} items)\n\n"
 
     for feed_id, items in feeds_map.items():
         feed_name = items[0].get("feed_name", feed_id) if items else feed_id
 
-        text_content += f"**{feed_name}** ({len(items)} 条)\n"
+        text_content += f"**{feed_name}** ({len(items)} items)\n"
 
         for i, item in enumerate(items, 1):
             title = item.get("title", "")

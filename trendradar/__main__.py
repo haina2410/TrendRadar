@@ -192,24 +192,24 @@ def check_all_versions(
 class NewsAnalyzer:
     """新闻分析器"""
 
-    # 模式策略定义
+    # Mode strategy definitions
     MODE_STRATEGIES = {
         "incremental": {
-            "mode_name": "增量模式",
-            "description": "增量模式（只关注新增新闻，无新增时不推送）",
-            "report_type": "增量分析",
+            "mode_name": "Incremental Mode",
+            "description": "Incremental mode (only new items, no push if nothing new)",
+            "report_type": "Incremental Update",
             "should_send_notification": True,
         },
         "current": {
-            "mode_name": "当前榜单模式",
-            "description": "当前榜单模式（当前榜单匹配新闻 + 新增新闻区域 + 按时推送）",
-            "report_type": "当前榜单",
+            "mode_name": "Current Ranking Mode",
+            "description": "Current ranking mode (current trending + new items section)",
+            "report_type": "Current Ranking",
             "should_send_notification": True,
         },
         "daily": {
-            "mode_name": "全天汇总模式",
-            "description": "全天汇总模式（所有匹配新闻 + 新增新闻区域 + 按时推送）",
-            "report_type": "全天汇总",
+            "mode_name": "Daily Summary Mode",
+            "description": "Daily summary mode (all matched news + new items section)",
+            "report_type": "Daily Summary",
             "should_send_notification": True,
         },
     }
@@ -533,9 +533,9 @@ class NewsAnalyzer:
             if ai_mode != mode:
                 # 根据 AI 模式确定报告类型
                 ai_report_type = {
-                    "daily": "当日汇总",
-                    "current": "当前榜单",
-                    "incremental": "增量更新"
+                    "daily": "Daily Summary",
+                    "current": "Current Ranking",
+                    "incremental": "Incremental Update"
                 }.get(ai_mode, report_type)
             else:
                 ai_report_type = report_type
