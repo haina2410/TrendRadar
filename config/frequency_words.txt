@@ -60,24 +60,16 @@ machine learning
 large language model
 /\bGPT\b/ => GPT
 neural network
-
-[OpenAI]
 /\bOpenAI\b/ => OpenAI
 /\bChatGPT\b/ => ChatGPT
 /\bGPT-4\b|\bGPT-5\b/ => GPT
 /\bSora\b/ => Sora
 Sam Altman
-
-[Anthropic]
 /\bAnthropic\b/ => Anthropic
 /\bClaude\b/ => Claude
-
-[Google AI]
 /\bGemini\b/ => Gemini
 /\bDeepMind\b/ => DeepMind
 /\bBard\b/ => Bard
-
-[DeepSeek]
 /\bDeepSeek\b/ => DeepSeek
 
 
