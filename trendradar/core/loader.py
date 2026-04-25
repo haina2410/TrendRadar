@@ -107,6 +107,7 @@ def _load_notification_config(config_data: Dict) -> Dict:
         "BARK_BATCH_SIZE": batch_size.get("bark", 3600),
         "SLACK_BATCH_SIZE": batch_size.get("slack", 4000),
         "DISCORD_BATCH_SIZE": batch_size.get("discord", 1900),
+        "DISCORD_FORUM_BATCH_SIZE": batch_size.get("discord_forum", 1900),
         "BATCH_SEND_INTERVAL": advanced.get("batch_send_interval", 1.0),
         "FEISHU_MESSAGE_SEPARATOR": advanced.get("feishu_message_separator", "---"),
         "MAX_ACCOUNTS_PER_CHANNEL": _get_env_int("MAX_ACCOUNTS_PER_CHANNEL") or advanced.get("max_accounts_per_channel", 3),
@@ -413,6 +414,7 @@ def _load_webhook_config(config_data: Dict) -> Dict:
     bark = channels.get("bark", {})
     slack = channels.get("slack", {})
     discord = channels.get("discord", {})
+    discord_forum = channels.get("discord_forum", {})
     generic = channels.get("generic_webhook", {})
 
     return {
@@ -444,6 +446,11 @@ def _load_webhook_config(config_data: Dict) -> Dict:
         "DISCORD_WEBHOOK_URL": _get_env_str("DISCORD_WEBHOOK_URL") or discord.get("webhook_url", ""),
         "DISCORD_USERNAME": _get_env_str("DISCORD_USERNAME") or discord.get("username", ""),
         "DISCORD_AVATAR_URL": _get_env_str("DISCORD_AVATAR_URL") or discord.get("avatar_url", ""),
+        # Discord Forum
+        "DISCORD_FORUM_WEBHOOK_URL": _get_env_str("DISCORD_FORUM_WEBHOOK_URL") or discord_forum.get("webhook_url", ""),
+        "DISCORD_FORUM_USERNAME": _get_env_str("DISCORD_FORUM_USERNAME") or discord_forum.get("username", ""),
+        "DISCORD_FORUM_AVATAR_URL": _get_env_str("DISCORD_FORUM_AVATAR_URL") or discord_forum.get("avatar_url", ""),
+        "DISCORD_FORUM_THREAD_TITLE": _get_env_str("DISCORD_FORUM_THREAD_TITLE") or discord_forum.get("thread_title", ""),
         # 通用 Webhook
         "GENERIC_WEBHOOK_URL": _get_env_str("GENERIC_WEBHOOK_URL") or generic.get("webhook_url", ""),
         "GENERIC_WEBHOOK_TEMPLATE": _get_env_str("GENERIC_WEBHOOK_TEMPLATE") or generic.get("payload_template", ""),
@@ -524,6 +531,12 @@ def _print_notification_sources(config: Dict) -> None:
         count = min(len(accounts), max_accounts)
         discord_source = "环境变量" if os.environ.get("DISCORD_WEBHOOK_URL") else "配置文件"
         notification_sources.append(f"Discord({discord_source}, {count}个账号)")
+
+    if config.get("DISCORD_FORUM_WEBHOOK_URL"):
+        accounts = parse_multi_account_config(config["DISCORD_FORUM_WEBHOOK_URL"])
+        count = min(len(accounts), max_accounts)
+        forum_source = "环境变量" if os.environ.get("DISCORD_FORUM_WEBHOOK_URL") else "配置文件"
+        notification_sources.append(f"DiscordForum({forum_source}, {count}个账号)")
 
     if config.get("GENERIC_WEBHOOK_URL"):
         accounts = parse_multi_account_config(config["GENERIC_WEBHOOK_URL"])

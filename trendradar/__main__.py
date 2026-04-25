@@ -324,6 +324,8 @@ class NewsAnalyzer:
                 (cfg["NTFY_SERVER_URL"] and cfg["NTFY_TOPIC"]),
                 cfg["BARK_URL"],
                 cfg["SLACK_WEBHOOK_URL"],
+                cfg.get("DISCORD_WEBHOOK_URL"),
+                cfg.get("DISCORD_FORUM_WEBHOOK_URL"),
                 cfg["GENERIC_WEBHOOK_URL"],
             ]
         )

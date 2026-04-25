@@ -1426,6 +1426,202 @@ def send_to_discord(
     return True
 
 
+def send_to_discord_forum(
+    webhook_url: str,
+    report_data: Dict,
+    report_type: str,
+    update_info: Optional[Dict] = None,
+    proxy_url: Optional[str] = None,
+    mode: str = "daily",
+    account_label: str = "",
+    *,
+    batch_size: int = 1900,
+    batch_interval: float = 1.0,
+    split_content_func: Callable = None,
+    rss_items: Optional[list] = None,
+    rss_new_items: Optional[list] = None,
+    ai_analysis: Any = None,
+    display_regions: Optional[Dict] = None,
+    standalone_data: Optional[Dict] = None,
+    username: Optional[str] = None,
+    avatar_url: Optional[str] = None,
+    thread_title: Optional[str] = None,
+    get_time_func: Optional[Callable] = None,
+) -> bool:
+    """
+    Send to Discord forum/media channel webhook.
+
+    First batch creates a new thread via `thread_name`; subsequent batches
+    are posted into that thread via `?thread_id=<id>`.
+    """
+    headers = {"Content-Type": "application/json"}
+    proxies = None
+    if proxy_url:
+        proxies = {"http": proxy_url, "https": proxy_url}
+
+    log_prefix = f"DiscordForum{account_label}" if account_label else "DiscordForum"
+
+    ai_content = None
+    ai_stats = None
+    if ai_analysis:
+        ai_content = _render_ai_analysis(ai_analysis, "discord")
+        if getattr(ai_analysis, "success", False):
+            ai_stats = {
+                "total_news": getattr(ai_analysis, "total_news", 0),
+                "analyzed_news": getattr(ai_analysis, "analyzed_news", 0),
+                "max_news_limit": getattr(ai_analysis, "max_news_limit", 0),
+                "hotlist_count": getattr(ai_analysis, "hotlist_count", 0),
+                "rss_count": getattr(ai_analysis, "rss_count", 0),
+                "ai_mode": getattr(ai_analysis, "ai_mode", ""),
+            }
+
+    import re
+    def _compact_discord_content(content: str) -> str:
+        content = re.sub(r'\n{3,}', '\n\n', content)
+        content = re.sub(r'\n\n(\s*\d+\.)', r'\n\1', content)
+        return content.strip()
+
+    header_reserve = get_max_batch_header_size("discord")
+    batches = split_content_func(
+        report_data,
+        "discord",
+        update_info,
+        max_bytes=batch_size - header_reserve,
+        mode=mode,
+        rss_items=rss_items,
+        rss_new_items=rss_new_items,
+        ai_content=ai_content,
+        standalone_data=standalone_data,
+        ai_stats=ai_stats,
+        report_type=report_type,
+    )
+
+    batches = add_batch_headers(batches, "discord", batch_size)
+    batches = [_compact_discord_content(b) for b in batches]
+
+    # Render thread title (Discord limits forum thread names to 100 chars)
+    now = get_time_func() if get_time_func else datetime.now()
+    title_template = thread_title or "TrendRadar - {report_type} - {datetime}"
+    rendered_title = title_template.format(
+        report_type=report_type,
+        date=now.strftime("%Y-%m-%d"),
+        time=now.strftime("%H:%M"),
+        datetime=now.strftime("%m-%d %H:%M"),
+    )[:100]
+
+    print(f"{log_prefix}消息分为 {len(batches)} 批次发送 [{report_type}]，线程标题：{rendered_title}")
+
+    thread_id: Optional[str] = None
+
+    def _post_batch(batch_idx: int, batch_content: str) -> bool:
+        nonlocal thread_id
+
+        content_size = len(batch_content.encode("utf-8"))
+        print(
+            f"发送{log_prefix}第 {batch_idx}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"
+        )
+
+        if content_size > 2000:
+            print(
+                f"警告：{log_prefix}第 {batch_idx}/{len(batches)} 批次消息过大（{content_size} 字节），Discord 限制 2000 字符"
+            )
+
+        payload: Dict[str, Any] = {"content": batch_content}
+        if username:
+            payload["username"] = username
+        if avatar_url:
+            payload["avatar_url"] = avatar_url
+
+        if thread_id is None:
+            # First batch: create the forum thread
+            payload["thread_name"] = rendered_title
+            target_url = f"{webhook_url}{'&' if '?' in webhook_url else '?'}wait=true"
+        else:
+            target_url = f"{webhook_url}{'&' if '?' in webhook_url else '?'}thread_id={thread_id}"
+
+        try:
+            response = requests.post(
+                target_url, headers=headers, json=payload, proxies=proxies, timeout=30
+            )
+        except Exception as e:
+            print(f"{log_prefix}第 {batch_idx}/{len(batches)} 批次发送出错 [{report_type}]：{e}")
+            return False
+
+        if response.status_code in (200, 204):
+            if thread_id is None and response.status_code == 200:
+                try:
+                    msg = response.json()
+                    thread_id = msg.get("channel_id")
+                    if thread_id:
+                        print(f"{log_prefix}已创建论坛帖子，thread_id={thread_id} [{report_type}]")
+                    else:
+                        print(f"{log_prefix}首批响应缺少 channel_id，后续批次可能失败 [{report_type}]")
+                except Exception as e:
+                    print(f"{log_prefix}解析首批响应失败：{e} [{report_type}]")
+            print(f"{log_prefix}第 {batch_idx}/{len(batches)} 批次发送成功 [{report_type}]")
+            return True
+
+        if response.status_code == 429:
+            try:
+                retry_after = response.json().get("retry_after", 5)
+            except Exception:
+                retry_after = 5
+            print(
+                f"{log_prefix}第 {batch_idx}/{len(batches)} 批次速率限制 [{report_type}]，等待 {retry_after} 秒后重试"
+            )
+            time.sleep(retry_after)
+            try:
+                retry_response = requests.post(
+                    target_url, headers=headers, json=payload, proxies=proxies, timeout=30
+                )
+            except Exception as e:
+                print(f"{log_prefix}第 {batch_idx}/{len(batches)} 批次重试出错 [{report_type}]：{e}")
+                return False
+
+            if retry_response.status_code in (200, 204):
+                if thread_id is None and retry_response.status_code == 200:
+                    try:
+                        msg = retry_response.json()
+                        thread_id = msg.get("channel_id")
+                        if thread_id:
+                            print(f"{log_prefix}已创建论坛帖子，thread_id={thread_id} [{report_type}]")
+                    except Exception:
+                        pass
+                print(f"{log_prefix}第 {batch_idx}/{len(batches)} 批次重试成功 [{report_type}]")
+                return True
+            print(
+                f"{log_prefix}第 {batch_idx}/{len(batches)} 批次重试失败，状态码：{retry_response.status_code}"
+            )
+            return False
+
+        error_msg = ""
+        try:
+            error_data = response.json()
+            error_msg = error_data.get("message", str(error_data))
+        except Exception:
+            error_msg = response.text or f"状态码：{response.status_code}"
+        print(
+            f"{log_prefix}第 {batch_idx}/{len(batches)} 批次发送失败 [{report_type}]，错误：{error_msg}"
+        )
+        return False
+
+    for i, batch_content in enumerate(batches, 1):
+        ok = _post_batch(i, batch_content)
+        if not ok:
+            return False
+        if i == 1 and thread_id is None:
+            # Without a thread_id, follow-up batches would create new threads.
+            # Bail out to avoid spamming the forum with duplicate posts.
+            if len(batches) > 1:
+                print(f"{log_prefix}首批未返回 thread_id，跳过剩余 {len(batches) - 1} 批次以避免重复建帖 [{report_type}]")
+            break
+        if i < len(batches):
+            time.sleep(batch_interval)
+
+    print(f"{log_prefix}发送完成 [{report_type}]")
+    return True
+
+
 def send_to_generic_webhook(
     webhook_url: str,
     payload_template: Optional[str],

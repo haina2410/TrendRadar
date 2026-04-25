@@ -349,6 +349,15 @@ notification:
       username: "TrendRadar"          # Bot display name (optional)
       avatar_url: ""                  # Bot avatar URL (optional)
 
+    discord_forum:
+      webhook_url: ""                 # Discord Webhook URL on a Forum or Media channel
+                                      # First batch creates a new forum post; subsequent batches reply in that thread
+      username: "TrendRadar"          # Bot display name (optional)
+      avatar_url: ""                  # Bot avatar URL (optional)
+      thread_title: "TrendRadar - {report_type} - {datetime}"
+                                      # Thread title template. Placeholders: {report_type}, {date}, {time}, {datetime}
+                                      # Truncated to 100 chars (Discord limit)
+
     generic_webhook:
       webhook_url: ""                 # 通用 Webhook URL（支持 Discord、Matrix、IFTTT 等）
       payload_template: ""            # JSON 模板，支持 {title} 和 {content} 占位符

@@ -25,6 +25,7 @@ from .senders import (
     send_to_bark,
     send_to_dingtalk,
     send_to_discord,
+    send_to_discord_forum,
     send_to_email,
     send_to_feishu,
     send_to_ntfy,
@@ -316,6 +317,13 @@ class NotificationDispatcher:
         # Discord
         if self.config.get("DISCORD_WEBHOOK_URL"):
             results["discord"] = self._send_discord(
+                report_data, report_type, update_info, proxy_url, mode, rss_items, rss_new_items,
+                ai_analysis, display_regions, standalone_data
+            )
+
+        # Discord Forum
+        if self.config.get("DISCORD_FORUM_WEBHOOK_URL"):
+            results["discord_forum"] = self._send_discord_forum(
                 report_data, report_type, update_info, proxy_url, mode, rss_items, rss_new_items,
                 ai_analysis, display_regions, standalone_data
             )
@@ -761,6 +769,50 @@ class NotificationDispatcher:
                 standalone_data=sd,
                 username=self.config.get("DISCORD_USERNAME"),
                 avatar_url=self.config.get("DISCORD_AVATAR_URL"),
+            ),
+        )
+
+    def _send_discord_forum(
+        self,
+        report_data: Dict,
+        report_type: str,
+        update_info: Optional[Dict],
+        proxy_url: Optional[str],
+        mode: str,
+        rss_items: Optional[List[Dict]] = None,
+        rss_new_items: Optional[List[Dict]] = None,
+        ai_analysis: Optional[AIAnalysisResult] = None,
+        display_regions: Optional[Dict] = None,
+        standalone_data: Optional[Dict] = None,
+    ) -> bool:
+        """发送到 Discord 论坛频道（多账号；首批创建帖子，后续批次回帖到同一线程）"""
+        rd, ri, rn, ai, sd = self._apply_display_regions(
+            report_data, display_regions, rss_items, rss_new_items, ai_analysis, standalone_data
+        )
+
+        return self._send_to_multi_accounts(
+            channel_name="DiscordForum",
+            config_value=self.config["DISCORD_FORUM_WEBHOOK_URL"],
+            send_func=lambda url, account_label: send_to_discord_forum(
+                webhook_url=url,
+                report_data=rd,
+                report_type=report_type,
+                update_info=update_info,
+                proxy_url=proxy_url,
+                mode=mode,
+                account_label=account_label,
+                batch_size=self.config.get("DISCORD_FORUM_BATCH_SIZE", 1900),
+                batch_interval=self.config.get("BATCH_SEND_INTERVAL", 1.0),
+                split_content_func=self.split_content_func,
+                rss_items=ri,
+                rss_new_items=rn,
+                ai_analysis=ai,
+                display_regions=display_regions or {},
+                standalone_data=sd,
+                username=self.config.get("DISCORD_FORUM_USERNAME"),
+                avatar_url=self.config.get("DISCORD_FORUM_AVATAR_URL"),
+                thread_title=self.config.get("DISCORD_FORUM_THREAD_TITLE"),
+                get_time_func=self.get_time_func,
             ),
         )
 
