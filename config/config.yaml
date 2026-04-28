@@ -55,12 +55,8 @@ schedule:
 platforms:
   enabled: true
   sources:
-    - id: "bilibili-hot-search"
-      name: "bilibili 热搜"
-    - id: "weibo"
-      name: "微博"
-    - id: "douyin"
-      name: "抖音"
+    - id: 'baidu'
+      name: 'baidu'
 
 
 
