@@ -1,39 +1,47 @@
 # ═══════════════════════════════════════════════════════════════
 #                    TrendRadar AI Interest Description
-#                         Version: 1.1.0
+#                         Version: 2.0.0
 # ═══════════════════════════════════════════════════════════════
 # Describe your interests in natural language. AI will extract tags
 # and classify news automatically.
-# Changes take effect on next run (old classifications will be refreshed)
+# Changes take effect on next run (old classifications will be refreshed).
 
 
 Here are the topics I want to follow:
 # Priority order: Top to bottom, higher = more important.
 # If a news item matches multiple categories, assign it to the higher one.
 
-1. AI & Large Language Models: Focus on OpenAI, Anthropic, Google DeepMind, DeepSeek, and their products (ChatGPT, Claude, Gemini, GPT-4/5, Sora). Track model capabilities, releases, open-source vs closed strategies, and competitive dynamics.
+1. Vietnam — Politics & Government: Track the Vietnamese government and Communist Party leadership (General Secretary Tô Lâm, Prime Minister Phạm Minh Chính, President Lương Cường, National Assembly Chair Trần Thanh Mẫn, Politburo, Quốc hội, Chính phủ). Follow major policy decisions, anti-corruption campaigns, leadership reshuffles, foreign policy stances, and provincial governance changes.
 
-2. Big Tech Companies: Track Apple, Google, Microsoft, Meta, Amazon, and NVIDIA. Focus on earnings, product launches, AI initiatives, strategic moves, and leadership changes.
+2. Vietnam — Economy & Companies: Follow VinFast, Vingroup, Vinhomes, FPT, Viettel, VNG, MoMo, Vietnam Airlines, and the major Vietnamese banks (Vietcombank, Techcombank, BIDV, Masan). Track VN-Index movements, interest rates, exchange rates, real estate (bất động sản), exports/imports, and Vietnamese tech-startup news.
 
-3. Startups & Venture Capital: Follow Y Combinator, funding rounds, IPOs, unicorns, acquisitions, and startup ecosystem trends. Track notable VC firms like Sequoia and a16z.
+3. Vietnam — Society & Major Events: Significant social, infrastructure, or natural-disaster news in Hà Nội, TP HCM (Sài Gòn), Đà Nẵng, Hải Phòng, Cần Thơ. Skip routine local crime/celebrity gossip unless it has national significance.
 
-4. Programming & Developer Tools: Track developments in Python, Rust, TypeScript, Go. Follow GitHub, VS Code, Docker, Kubernetes, and developer productivity tools.
+4. Geopolitics — Ukraine-Russia War: Track frontline developments, ceasefire negotiations, sanctions, Putin and Zelensky statements, NATO involvement, and Western military aid.
 
-5. Semiconductors & Chips: Focus on NVIDIA, AMD, Intel, TSMC. Track GPU supply, chip manufacturing, AI accelerators, and semiconductor industry dynamics.
+5. Geopolitics — Middle East: Israel-Hamas conflict, Gaza, Iran, Hezbollah, Lebanon, Syria, West Bank developments. Track ceasefires, diplomatic moves, regional escalations.
 
-6. Electric Vehicles & Autonomous Driving: Follow Tesla, Rivian, autonomous driving (FSD, Waymo), EV market trends, battery technology, and regulatory developments.
+6. Geopolitics — China & Taiwan: China-Taiwan tensions, Xi Jinping policy, China-US relations, Hong Kong, South China Sea / Biển Đông disputes (especially affecting Vietnam).
 
-7. Cryptocurrency & Web3: Track Bitcoin, Ethereum, blockchain technology, DeFi, NFTs, and crypto market movements (with moderate priority).
+7. US Politics: Trump administration, White House, Congress, Supreme Court rulings, tariffs, major executive orders, and US-Asia policy.
 
-8. Finance & Markets: Follow Federal Reserve policy, interest rates, stock market trends (S&P 500, Nasdaq), major earnings reports, and macroeconomic indicators.
+8. Cryptocurrency: Bitcoin, Ethereum, Solana, XRP, major altcoins. Track ETF flows, SEC/CFTC regulation, Binance, Coinbase, stablecoins (USDT/USDC), DeFi, halving events, and major hacks or exchange failures. Skip pure price-prediction clickbait.
 
-9. Science & Space: Track SpaceX, NASA, space exploration, rocket launches, and breakthrough scientific discoveries.
+9. AI & Large Language Models: OpenAI, Anthropic, Google DeepMind, DeepSeek, Meta AI. Track new model releases (GPT, Claude, Gemini), capabilities, open vs closed strategy, and competitive dynamics. Significant AI-policy news.
 
-10. Cybersecurity: Follow major security breaches, vulnerabilities, privacy regulations, and security industry developments.
+10. Big Tech: Apple, Google, Microsoft, Meta, Amazon, NVIDIA, Tesla. Earnings, product launches, major acquisitions, leadership changes, antitrust actions.
+
+11. Global Markets & Finance: Federal Reserve policy, interest rates, S&P 500/Nasdaq major moves, major-company earnings, macroeconomic indicators, oil prices.
+
+12. Software Engineering: Significant developments in Python, Rust, TypeScript, Go, Kubernetes, Docker, GitHub, VS Code. Major open-source events. Skip routine release notes.
+
+13. Global Bodies & Diplomacy: NATO, EU, UN, BRICS, G7, G20, ASEAN, IMF, World Bank, WHO. Major summits, sanctions, treaty negotiations.
 
 
 # Quality filters (skip titles matching these patterns even if they match tags above)
-# Feel free to modify based on your preferences
-- Skip clickbait titles (e.g., "You won't believe...", "Shocking!", "This changes everything!")
-- Skip promotional content and sponsored posts
-- Skip speculation without substance
+- Skip clickbait titles (e.g., "You won't believe...", "Shocking!", "This changes everything!").
+- Skip promotional content, sponsored posts, and pure paid-ad reposts.
+- Skip pure speculation or rumor without verifiable substance.
+- Skip celebrity / entertainment gossip unless it has clear policy, business, or national-significance angle.
+- Skip routine sports scores and match results.
+- For Vietnamese-language sources: prefer hard-news topics over feature pieces and lifestyle content.

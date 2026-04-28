@@ -187,7 +187,7 @@ report:
 # 5) 这里决定“筛选路径”，不决定 AI 模型（模型在 ai 段）
 # ===============================================================
 filter:
-  method: "keyword"                # Options: keyword | ai (ai requires API key)
+  method: "ai"                     # Options: keyword | ai (ai requires API key)
 
   # AI 模式标签排序开关（仅 ai 模式生效）
   # true: 按标签优先级排序（来自兴趣描述提取顺序）
