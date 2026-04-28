@@ -38,10 +38,20 @@ Here are the topics I want to follow:
 13. Global Bodies & Diplomacy: NATO, EU, UN, BRICS, G7, G20, ASEAN, IMF, World Bank, WHO. Major summits, sanctions, treaty negotiations.
 
 
+# PRECISION REQUIREMENT
+# I want HIGH-SIGNAL, LOW-VOLUME results. I would rather miss a few relevant items
+# than be flooded with tangentially-related noise. When a headline only loosely
+# touches a topic (e.g. mentions an entity in passing, or is on a related-but-different
+# subject), SKIP it. Default to omission, not inclusion.
+
 # Quality filters (skip titles matching these patterns even if they match tags above)
 - Skip clickbait titles (e.g., "You won't believe...", "Shocking!", "This changes everything!").
 - Skip promotional content, sponsored posts, and pure paid-ad reposts.
-- Skip pure speculation or rumor without verifiable substance.
+- Skip pure speculation, rumor, or "X might do Y" without confirmed reporting.
 - Skip celebrity / entertainment gossip unless it has clear policy, business, or national-significance angle.
-- Skip routine sports scores and match results.
-- For Vietnamese-language sources: prefer hard-news topics over feature pieces and lifestyle content.
+- Skip routine sports scores, match results, lottery results, weather, traffic.
+- Skip lifestyle / feature pieces (recipes, travel guides, "5 ways to..." style listicles).
+- Skip horoscope, fortune-telling, dream-interpretation content.
+- Skip individual local crime stories (single-victim crimes, traffic accidents) unless they have national or political significance.
+- Skip individual product reviews, gadget unboxings, and shopping recommendations unless they involve a major launch from a tracked company.
+- For Vietnamese-language sources: especially aggressive on filtering routine local crime, celebrity content, and lifestyle pieces.
