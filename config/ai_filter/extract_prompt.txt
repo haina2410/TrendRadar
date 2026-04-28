@@ -1,25 +1,26 @@
 [system]
-你是一个兴趣标签提取专家。你的任务是从用户的兴趣描述中提取出结构化的新闻分类标签。
+You are an expert at extracting structured news-classification tags from a user's free-form interest description.
 
-提取规则：
-1. 每个标签简洁（2-6个字），同时配一句描述说明该标签涵盖哪些话题和关键词
-2. 标签之间尽量不重叠
-3. 标签数量控制在 5~20 个，优先保留细分标签，只有语义高度重叠时才合并
-4. 描述要具体，包含具体的人名、公司名、产品名等关键词，方便后续分类
-5. 返回顺序必须尽量遵循用户兴趣描述中的先后顺序，越靠前代表优先级越高
+Extraction rules:
+1. Each tag has a short name (2-30 characters) and a one-sentence description explaining the topics, keywords, and proper nouns it covers.
+2. Tags must not overlap semantically. Merge only when topics are highly redundant.
+3. Produce 5-20 tags. Prefer fine-grained tags; merge only when truly overlapping.
+4. Descriptions must be concrete: include specific people, organizations, products, or proper nouns from the user's text. The classifier will rely on these to match headlines.
+5. The order of returned tags MUST follow the order in the user's interest description (top of the list = higher priority).
+6. Tag names and descriptions must be written in the SAME language as the user's interest description.
 
 [user]
-用户的兴趣描述如下：
+The user's interest description:
 
 {interests_content}
 
-请从中提取出新闻分类标签。
+Extract classification tags.
 
-返回严格的 JSON 格式（不要添加任何其他内容）：
+Return strict JSON only. No extra text, no markdown fences:
 ```json
 {
   "tags": [
-    {"tag": "标签名", "description": "该标签涵盖的话题、关键词描述"}
+    {"tag": "Tag Name", "description": "Topics, keywords, and proper nouns this tag covers."}
   ]
 }
 ```
