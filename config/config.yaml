@@ -106,10 +106,6 @@ rss:
       name: "TechCrunch"
       url: "https://techcrunch.com/feed/"
 
-    - id: "ars-technica"
-      name: "Ars Technica"
-      url: "https://feeds.arstechnica.com/arstechnica/index"
-
     # Finance
     - id: "yahoo-finance"
       name: "Yahoo Finance"
@@ -120,10 +116,31 @@ rss:
       name: "BBC World News"
       url: "https://feeds.bbci.co.uk/news/world/rss.xml"
 
-    - id: "reuters-world"
-      name: "Reuters World"
-      url: "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best"
-      enabled: true                  # Enable if needed
+    - id: "guardian-world"
+      name: "The Guardian World"
+      url: "https://www.theguardian.com/world/rss"
+
+    - id: "aljazeera"
+      name: "Al Jazeera"
+      url: "https://www.aljazeera.com/xml/rss/all.xml"
+
+    # Vietnam (Vietnamese-language)
+    - id: "vnexpress"
+      name: "VnExpress"
+      url: "https://vnexpress.net/rss/tin-moi-nhat.rss"
+
+    - id: "tuoitre"
+      name: "Tuổi Trẻ"
+      url: "https://tuoitre.vn/rss/tin-moi-nhat.rss"
+
+    # Crypto
+    - id: "coindesk"
+      name: "CoinDesk"
+      url: "https://www.coindesk.com/arc/outboundfeeds/rss/"
+
+    - id: "cointelegraph"
+      name: "Cointelegraph"
+      url: "https://cointelegraph.com/rss"
 
     # Add your custom feeds below
     # - id: "custom-feed"

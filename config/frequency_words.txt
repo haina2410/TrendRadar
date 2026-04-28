@@ -77,48 +77,44 @@ Sam Altman
 #                         Big Tech
 # ═══════════════════════════════════════════════════════════════
 
-[Apple]
+[Big Tech]
+# Apple
 /\bApple\b/ => Apple
 /\biPhone\b/ => iPhone
 /\biPad\b/ => iPad
 /\bMacBook\b/ => MacBook
 /\bVision Pro\b/ => Vision Pro
 Tim Cook
-
-[Google]
+# Google
 /\bGoogle\b/ => Google
 /\bAlphabet\b/ => Alphabet
 /\bAndroid\b/ => Android
 /\bChrome\b/ => Chrome
 /\bYouTube\b/ => YouTube
-
-[Microsoft]
+Sundar Pichai
+# Microsoft
 /\bMicrosoft\b/ => Microsoft
 /\bWindows\b/ => Windows
 /\bAzure\b/ => Azure
 /\bCopilot\b/ => Copilot
 Satya Nadella
-
-[Meta]
+# Meta
 /\bMeta\b/ => Meta
 /\bFacebook\b/ => Facebook
 /\bInstagram\b/ => Instagram
 /\bWhatsApp\b/ => WhatsApp
 Mark Zuckerberg
-
-[Amazon]
+# Amazon
 /\bAmazon\b/ => Amazon
 /\bAWS\b/ => AWS
 Jeff Bezos
 Andy Jassy
-
-[Tesla]
+# Tesla
 /\bTesla\b/ => Tesla
 Elon Musk
 /\bCybertruck\b/ => Cybertruck
 /\bFSD\b/ => FSD
-
-[NVIDIA]
+# NVIDIA
 /\bNVIDIA\b/ => NVIDIA
 Jensen Huang
 /\bCUDA\b/ => CUDA
@@ -129,32 +125,45 @@ Jensen Huang
 #                         Programming & Tech
 # ═══════════════════════════════════════════════════════════════
 
-[Programming]
+[Dev]
+# Languages
 /\bPython\b/ => Python
 /\bRust\b/ => Rust
 /\bTypeScript\b/ => TypeScript
 /\bJavaScript\b/ => JavaScript
 /\bGo\b(?:lang)?\b/ => Go
-
-[DevTools]
+# Tools
 /\bGitHub\b/ => GitHub
 /\bVS Code\b|\bVSCode\b/ => VS Code
 /\bDocker\b/ => Docker
 /\bKubernetes\b|\bk8s\b/ => Kubernetes
 
 [Crypto]
-/\bBitcoin\b/ => Bitcoin
-/\bEthereum\b/ => Ethereum
+/\bBitcoin\b|\bBTC\b/ => Bitcoin
+/\bEthereum\b|\bETH\b/ => Ethereum
+/\bSolana\b|\bSOL\b/ => Solana
+/\bXRP\b|\bRipple\b/ => XRP
+/\bDogecoin\b|\bDOGE\b/ => Dogecoin
 /\bcrypto\b/ => Crypto
 /\bblockchain\b/ => Blockchain
 /\bWeb3\b/ => Web3
+/\bDeFi\b/ => DeFi
+/\bNFT\b/ => NFT
+/\bstablecoin\b/ => Stablecoin
+/\bUSDT\b|\bTether\b/ => Tether
+/\bUSDC\b/ => USDC
+/\bBinance\b/ => Binance
+/\bCoinbase\b/ => Coinbase
+/\bspot ETF\b|\bBitcoin ETF\b|\bcrypto ETF\b/ => Crypto ETF
+/\bhalving\b/ => Halving
+/\bSEC\b/ => SEC
 
 
 # ═══════════════════════════════════════════════════════════════
 #                         Startups & VC
 # ═══════════════════════════════════════════════════════════════
 
-[Startups]
+[Startups & VC]
 startup
 /\bY Combinator\b|\bYC\b/ => Y Combinator
 funding round
@@ -162,8 +171,6 @@ Series A
 Series B
 /\bIPO\b/ => IPO
 unicorn
-
-[VC]
 venture capital
 /\bVC\b/ => VC
 Sequoia
@@ -175,18 +182,119 @@ Andreessen Horowitz
 #                         Finance & Markets
 # ═══════════════════════════════════════════════════════════════
 
-[Markets]
+[Finance]
 stock market
 /\bS&P 500\b|\bS&P500\b/ => S&P 500
 /\bNasdaq\b/ => Nasdaq
 /\bDow Jones\b/ => Dow Jones
 Fed
 interest rate
-
-[Finance]
 earnings
 revenue
 profit
 valuation
 acquisition
 merger
+
+
+# ═══════════════════════════════════════════════════════════════
+#                         Vietnam
+# ═══════════════════════════════════════════════════════════════
+
+[Vietnam Places]
+/Việt Nam|Vietnam/ => Việt Nam
+/Hà Nội|Hanoi/ => Hà Nội
+/TP\.?\s?HCM|TPHCM|Hồ Chí Minh|Sài Gòn|Saigon/ => TP HCM
+/Đà Nẵng|Da Nang/ => Đà Nẵng
+/Hải Phòng/ => Hải Phòng
+/Cần Thơ/ => Cần Thơ
+/Biển Đông|East Sea|South China Sea/ => Biển Đông
+/ASEAN/ => ASEAN
+
+[Vietnam Companies]
+/VinFast/ => VinFast
+/Vingroup/ => Vingroup
+/Vinhomes/ => Vinhomes
+/FPT/ => FPT
+/Viettel/ => Viettel
+/Vietnam Airlines|Vietnam Airline/ => Vietnam Airlines
+/VNG/ => VNG
+/MoMo|Momo/ => MoMo
+/Vietcombank|VCB/ => Vietcombank
+/Techcombank|TCB/ => Techcombank
+/BIDV/ => BIDV
+/Masan/ => Masan
+
+[Vietnam Politics]
+/Tô Lâm|To Lam/ => Tô Lâm
+/Phạm Minh Chính|Pham Minh Chinh/ => Phạm Minh Chính
+/Lương Cường|Luong Cuong/ => Lương Cường
+/Trần Thanh Mẫn|Tran Thanh Man/ => Trần Thanh Mẫn
+Tổng Bí thư
+Thủ tướng
+Chủ tịch nước
+Bộ Chính trị
+Quốc hội
+Chính phủ
+
+[Vietnam Economy]
+chứng khoán
+VN-Index
+ngân hàng
+lãi suất
+tỷ giá
+xuất khẩu
+nhập khẩu
+bất động sản
+thuế
+
+
+# ═══════════════════════════════════════════════════════════════
+#                         World & Geopolitics
+# ═══════════════════════════════════════════════════════════════
+
+[Ukraine-Russia]
+/\bUkraine\b/ => Ukraine
+/\bRussia\b/ => Russia
+/\bPutin\b/ => Putin
+/\bZelensky\b|\bZelenskyy\b/ => Zelensky
+/\bKyiv\b|\bKiev\b/ => Kyiv
+/\bMoscow\b/ => Moscow
+ceasefire
+sanctions
+
+[Middle East]
+/\bIsrael\b/ => Israel
+/\bGaza\b/ => Gaza
+/\bHamas\b/ => Hamas
+/\bIran\b/ => Iran
+/\bHezbollah\b/ => Hezbollah
+/\bLebanon\b/ => Lebanon
+/\bSyria\b/ => Syria
+/\bWest Bank\b/ => West Bank
+
+[China-Taiwan]
+/\bChina\b/ => China
+/\bTaiwan\b/ => Taiwan
+/\bXi Jinping\b/ => Xi Jinping
+/\bBeijing\b/ => Beijing
+/\bHong Kong\b/ => Hong Kong
+
+[US Politics]
+/\bTrump\b/ => Trump
+/\bBiden\b/ => Biden
+/\bWhite House\b/ => White House
+/\bCongress\b/ => Congress
+/\bSupreme Court\b/ => Supreme Court
+tariff
+
+[Global Bodies]
+/\bNATO\b/ => NATO
+/\bEU\b|\bEuropean Union\b/ => EU
+/\bUN\b|\bUnited Nations\b/ => UN
+/\bBRICS\b/ => BRICS
+/\bG7\b/ => G7
+/\bG20\b/ => G20
+/\bWHO\b/ => WHO
+/\bIMF\b/ => IMF
+/\bWorld Bank\b/ => World Bank
