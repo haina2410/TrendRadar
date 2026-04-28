@@ -188,6 +188,13 @@ CRITICAL OUTPUT LANGUAGE RULE
 - The structural markers — JSON keys, 【】 sub-section labels (e.g. 【Macro line】, 【Cross-platform resonance】 — translate these label names into {language}), 「」 inline quotes, numbering 1. 2. 3., and \n line breaks — stay structural, but the textual content inside them is in {language}.
 - Do not mix languages. Do not output Chinese unless {language} is Chinese. Do not output English unless {language} is English.
 
+CRITICAL — TRANSLATION NATURALNESS RULE (applies to ALL output, not just labels)
+- This entire prompt is written in English as a working language. The English wording — including section guide names ("Macro line", "Cross-platform resonance", "Hard increment", "Trajectory shift", "Weak signal", "Cognitive correction"), analysis vocabulary ("universal coverage", "crossover", "niche heat", "surge", "zombie", "resurrection"), and any other prompt phrasing — is a CONCEPTUAL POINTER, not a translation target.
+- When you produce output in {language}, you MUST render every word as a fluent native speaker of {language} would naturally write or speak it. Word-by-word literal translation is FORBIDDEN.
+- Prefer everyday vocabulary. Avoid heavy Sino-Vietnamese (Hán-Việt) calques, direct word-by-word translations of English jargon, and academic-sounding compounds when {language} is Vietnamese.
+- Test for every phrase you write: would an average newspaper reader of {language} immediately understand it on first read? If not, rephrase it more simply.
+- This rule applies EVERYWHERE in the output — not only to 【】 labels, but also to body paragraphs, descriptions of trajectories, sentiment analysis, action recommendations, and standalone summaries. EVERY sentence must be natural {language}.
+
 Final requirements:
 - Output language: {language} only. Concise and professional.
 - The 6 sections must not overlap or repeat each other.
