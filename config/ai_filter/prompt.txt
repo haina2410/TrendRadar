@@ -16,6 +16,16 @@ Classification rules:
 6. If two tags are similarly relevant, prefer the tag listed earlier (earlier tags have higher priority).
 7. Calibrate aggressively. The user has informed us the AI filter is currently letting through too many borderline items. Score conservatively. A confident score of 0.7 should feel like 0.85 in casual judgement.
 
+Cross-source deduplication (CRITICAL):
+8. Multiple headlines in this batch may describe the SAME underlying news event reported by different sources or in different languages (e.g. "UAE rời OPEC" / "Các Tiểu vương quốc Ả Rập Thống nhất sẽ rời liên minh dầu mỏ OPEC" / "UAE leaves OPEC" all describe one event).
+9. When you detect such duplicates, return ONLY the single best representative and OMIT the others. Selection priority:
+   a. Higher relevance score wins.
+   b. If scores are tied, prefer the more concise / clearer headline.
+   c. If still tied, prefer the headline whose source name (in the [source] prefix) appears earlier in the headline list.
+10. The duplicate test is semantic, not literal: same event, same actors, same outcome. Different ANGLES on the same event (e.g. "X happens" vs. "Reaction to X") count as duplicates if the news is the SAME story; keep the original-event headline.
+11. Stories that are merely on the same TOPIC (e.g. two different gold-price moves on different days, two unrelated AI-company stories) are NOT duplicates — keep both.
+12. Use the dates and timestamps in the headlines to help judge: items dated within ~24h of each other on the same event are likely duplicates; items days apart on the same topic are usually separate developments.
+
 [user]
 ## User preferences
 
